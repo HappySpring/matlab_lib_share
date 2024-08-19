@@ -1,8 +1,50 @@
 function FUN_download_HYCOM_GOFS31_v1a_general_1994_to_present( var_download_list_shortname, output_fn_prefix, lonlimit, latlimit, depthlimit, timelimit )
-   
-% V1.1: update time limits for Exp 53.X
+% FUN_download_HYCOM_GOFS31_v1a_general_1994_to_present( var_download_list_shortname, output_fn_prefix, lonlimit, latlimit, depthlimit, timelimit )
+% 
+% Download hycom data from hycom.org via opendap
+% It requires easy_netcdf
 %
- 
+%
+% INPUT: 
+%      var_download_list_shortname [cell]: variable to be downloaded. 
+%                                   **the input variable here must be a cell**
+%                                   available options: ssh/temp/salt/u/v 
+%                                   e.g., {'ssh'}, {'ssh','temp'}, {'ssh','temp','u','v'}
+%                                  
+%      output_fn_prefix: prefix of the output file
+%      lonlimit:         range of longigude to be donwloaded like [166 168];
+%                        Please note that hycom use 0-360 for longitude
+%      latlimit:         range of latitude to be donwloaded like [65 66];
+%      depthlimit:       range of depth to be donwloaded like [0 10];
+%      timelimit:       range of depth to be donwloaded like [datenum(2016,6,1) datenum(2016,6,6)];
+%
+% V1.1: update time limits for Exp 53.X
+% by L. Chi (L.Chi.Ocean@outlook.com)
+%
+%
+% ========================= DEMO ==========================================
+% var_download_list_shortname = {'temp'};
+% output_fn_prefix  = 'test01';
+% lonlimit          =  [165 166];
+% latlimit          =  [50 51];
+% depthlimit        =  [0 5];
+% timelimit         =  [datenum(2016,6,1) datenum(2016,6,2,23,59,59)];
+% 
+% 
+% FUN_download_HYCOM_GOFS31_v1a_general_1994_to_present( var_download_list_shortname, output_fn_prefix, lonlimit, latlimit, depthlimit, timelimit )
+% =========================================================================
+
+
+%% prepare the input
+if ~iscell( var_download_list_shortname )
+    var_download_list_shortname = {var_download_list_shortname};
+end
+
+if any(lonlimit<0)
+    warning('Please note that hycom.org use 0-360 for longitude!')
+end
+
+%% available variables
 iv = 0;
 
 iv = iv + 1;
