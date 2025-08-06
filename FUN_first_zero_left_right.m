@@ -9,6 +9,10 @@ else
    error('Only 1-D input is accepted.'); 
 end
 
+if isnan(y)
+    error('Nan found in the input data!')
+end
+
 [ x_at_y0, ~, ind_at_y0, ~ ]= intersections( x, y, [min(x) max(x)], [0 0] );
 
 % ---- for debug and verification propose only ----

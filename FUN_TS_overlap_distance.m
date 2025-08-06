@@ -5,6 +5,8 @@ function [dis_overlap, range_overlap] = FUN_TS_overlap_distance( x, y )
 %
 % find the length of the overlap distance between x and y
 
+% V1.11 by L. Chi. For boundary overlap, like [1 2] and [2 3],
+%                    range_overlap will be [2 2] instead of [nan nan];
 % V1.10 By L. Chi. If length(x) > 2, it will be replaced by [min(x), max(x)] 
 % V1.00 By Lequan Chi
 
@@ -40,7 +42,7 @@ x = sort( x, 'ascend');
 y = sort( y, 'ascend');
 
 %% 
-if y(2) <= x(1) || y(1) >= x(2)
+if y(2) < x(1) || y(1) > x(2)
     % No overlay between x & y -------------------------------------------
     dis_overlap = 0;
     range_overlap = [nan nan];

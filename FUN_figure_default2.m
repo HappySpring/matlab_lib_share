@@ -17,3 +17,8 @@ gcafontsize = 12;
 set(gcf,'DefaultTextFontSize',gcafontsize)
 
 set(gcf,'paperpositionMode','auto');
+
+
+
+%% =====================================
+% fig = figure('position',[100 100 975 550 ] );

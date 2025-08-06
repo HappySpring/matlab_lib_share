@@ -8,7 +8,7 @@ function isoline = FUN_isoline_detection( lon, lat,  Temp, isothermal )
 tem_Temp2 = Temp;
 
 if any( isnan( Temp(:) ) )
-   warning('Please be careful of the nan interplation!'); 
+   %warning('Please be careful of the nan interplation!'); 
    tem_Temp2 = inpaint_nans( tem_Temp2 );   
 end
 

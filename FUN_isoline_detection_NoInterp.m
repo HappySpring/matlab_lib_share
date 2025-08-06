@@ -6,7 +6,7 @@ function isoline = FUN_isoline_detection_NoInterp( lon, lat,  data, isoline_valu
 %       lat: latitute (or y)
 %       data [2-D matrix], {lon, lat}: 
 %       isoline_value: isoline required
-%       fillvalue: replace nan by this value. It helps to keep a closed contour
+%       fillvalue (optional): replace nan by this value. It helps to keep a closed contour
 %
 % OUTPUT: 
 %       isoline (structure)
