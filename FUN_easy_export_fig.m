@@ -6,14 +6,14 @@ function FUN_easy_export_fig(filename,varargin)
 %    FUN_easy_export_fig(filename,[ optional params for export_fig ])
 %
 
-    set(gcf,'color','w')
-    set(gcf,'paperpositionmode','auto')
-    set(gcf,'renderer','zbuffer')
+    set(gcf,'color','w');
+    set(gcf,'paperpositionmode','auto');
+    set(gcf,'renderer','zbuffer');
     
     
 if exist('export_fig','file')
   
-    export_fig( filename ,varargin{:} )
+    export_fig( filename ,varargin{:} );
 
 else
     disp('============================================================')
@@ -21,7 +21,7 @@ else
     warning('>>>>>====using saveas instead of export_fig====<<<<<')
     disp('============================================================')
     
-    saveas(gca,filename)
+    saveas(gca,filename);
     
 end
 

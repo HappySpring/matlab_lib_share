@@ -360,12 +360,20 @@ end
 % =========================================================================
 % summarize regional events
 % =========================================================================
-
+    
+if ~isempty(out.reg_events)
     out.reg_events_mat.time_start    = [out.reg_events(:).time_start];
     out.reg_events_mat.time_end      = [out.reg_events(:).time_end  ];
     out.reg_events_mat.level         = [out.reg_events(:).level    ];
     out.reg_events_mat.length        = [out.reg_events(:).length   ];
     out.reg_events_mat.ref_daily_min = arrayfun(@(x)x.temp_min_day1.mean, out.reg_events);
+else
+    out.reg_events_mat.time_start    = [];
+    out.reg_events_mat.time_end      = [];
+    out.reg_events_mat.level         = [];
+    out.reg_events_mat.length        = [];
+    out.reg_events_mat.ref_daily_min = [];
+end
 
     % % % % out.reg_events_mat.hourly.max_hourly_tdrop_rate.gradient = arrayfun(@(x)x.hourly.max_hourly_tdrop_rate.gradient, out.reg_events);
     % % % % out.reg_events_mat.hourly.max_hourly_tdrop_rate.time = arrayfun(@(x)x.hourly.max_hourly_tdrop_rate.time, out.reg_events);

@@ -20,9 +20,17 @@ function [x_b, y_b] = FUN_MAP_patch_2D( x, y, data, x0, y0, varargin )
         
 %% ==== ## prepare boundaries ====
 
+if isvector(x)
     [x_b, x_width ]= FUN_grid_get_boundary_width( x, x0 );
     [y_b, y_width ]= FUN_grid_get_boundary_width( y, y0 );
+
+else
+    error('2D lon/lat input! This part has not been finished yet! ')
+
+end
     
+    
+
 %% ==== ## plot ====
     data = squeeze( data );
     FUN_MAP_patch_2D_from_xb_yb( x_b, y_b, data, varargin{:} );
