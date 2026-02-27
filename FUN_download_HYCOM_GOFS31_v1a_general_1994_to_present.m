@@ -1,4 +1,4 @@
-function FUN_download_HYCOM_GOFS31_v1a_general_1994_to_present( var_download_list_shortname, output_fn_prefix, lonlimit, latlimit, depthlimit, timelimit )
+function FUN_download_HYCOM_GOFS31_v1a_general_1994_to_present( var_download_list_shortname, output_fn_prefix, lonlimit, latlimit, depthlimit, timelimit, varargin )
 % FUN_download_HYCOM_GOFS31_v1a_general_1994_to_present( var_download_list_shortname, output_fn_prefix, lonlimit, latlimit, depthlimit, timelimit )
 % 
 % Download hycom data from hycom.org via opendap
@@ -39,6 +39,17 @@ function FUN_download_HYCOM_GOFS31_v1a_general_1994_to_present( var_download_lis
 
 
 %% prepare the input
+
+[Max_Count_per_group, varargin]=  FUN_codetools_read_from_varargin( varargin, 'Max_Count_per_group', 48, true );
+
+[is_resumable, varargin] =  FUN_codetools_read_from_varargin( varargin, 'is_resumable', false, true );
+
+
+if ~isempty(varargin)
+    error('Unknown input paramters!')
+end
+
+
 if ~iscell( var_download_list_shortname )
     var_download_list_shortname = {var_download_list_shortname};
 end
@@ -82,106 +93,117 @@ var_list(iv).var_url_style{1} = 'v3z';
 
 
 %% exp information
+exp = FUN_download_HYCOM_set_exps();
 
-sourcebase = 'http://tds.hycom.org/thredds/dodsC' ;
-
-
-% Please note that the timelimit in this section is extracted from 
-%  "https://www7320.nrlssc.navy.mil/GLBhycomcice1-12/"
-% Data may be still available out of the timelimit below on hycom.org 
-
-ie = 0;
-
-% Reanalysis --------------------------------------------------------------
-
-for year_now = 1994:2015
-    
-    ie = ie + 1;
-    exp(ie).id        = '53.X';
-    exp(ie).name      = ['expt_' exp(ie).id];
-    exp(ie).group     = 'GLBv0.08';
-    exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name, '/data/', num2str(year_now) ];
-    exp(ie).url_style = 0;
-    
-    if year_now == 2015 
-        exp(ie).timelimit = [ datenum( year_now, 1, 1, 12, 0, 0 ), datenum(year_now, 12, 31, 9, 0, 0)];
-    elseif year_now == 1994
-        exp(ie).timelimit = [ datenum( year_now, 1, 1, 12, 0, 0 ), datenum(year_now, 12, 31, 21, 0, 0)];
-    else
-        exp(ie).timelimit = [ datenum( year_now, 1, 1,  0, 0, 0 ), datenum(year_now, 12, 31, 21, 0, 0)];
-
-    end
-    
-end
-
-% handcast archived -------------------------------------------------------
-ie = ie + 1;
-exp(ie).id        = '56.3';
-exp(ie).name      = ['expt_' exp(ie).id];
-exp(ie).group     = 'GLBv0.08';
-exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
-%exp(ie).timelimit = [ datenum(2014, 7, 1, 12, 0, 0), datenum(2016, 5, 1, 9, 0, 0)];
-exp(ie).timelimit = [ datenum(2015, 12, 31, 12, 0, 0), datenum(2016, 5, 1, 9, 0, 0)]; % It is shorten to follow expt 53.X
-exp(ie).url_style = 0;
-
-ie = ie + 1;
-exp(ie).id        = '57.2';
-exp(ie).name      = ['expt_' exp(ie).id];
-exp(ie).group     = 'GLBv0.08';
-exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
-exp(ie).timelimit = [ datenum(2016, 5, 1, 12, 0, 0), datenum(2017, 2, 1, 9, 0, 0)];
-exp(ie).url_style = 0;
-
-ie = ie + 1;
-exp(ie).id        = '92.8';
-exp(ie).name      = ['expt_' exp(ie).id];
-exp(ie).group     = 'GLBv0.08';
-exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
-exp(ie).timelimit = [ datenum(2017, 2, 1, 12, 0, 0), datenum(2017, 6, 1, 9, 0, 0)];
-exp(ie).url_style = 0;
-
-ie = ie + 1;
-exp(ie).id        = '57.7';
-exp(ie).name      = ['expt_' exp(ie).id];
-exp(ie).group     = 'GLBv0.08';
-exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
-exp(ie).timelimit = [ datenum(2017, 6, 1, 12, 0, 0), datenum(2017, 10, 1, 9, 0, 0)];
-exp(ie).url_style = 0;
-
-ie = ie + 1;
-exp(ie).id        = '92.9';
-exp(ie).name      = ['expt_' exp(ie).id];
-exp(ie).group     = 'GLBv0.08';
-exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
-exp(ie).timelimit = [ datenum(2017, 10, 1, 12, 0, 0), datenum(2018, 1, 1, 9, 0, 0)];
-exp(ie).url_style = 0;
-
-ie = ie + 1;
-exp(ie).id        = '93.0';
-exp(ie).name      = ['expt_' exp(ie).id];
-exp(ie).group     = 'GLBv0.08';
-exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
-exp(ie).timelimit = [ datenum(2018, 1, 1, 12, 0, 0), datenum(2020,2,19, 9, 0, 0)];
-exp(ie).url_style = 0;
-
-ie = ie + 1;
-exp(ie).id        = '93.0';
-exp(ie).name      = ['expt_' exp(ie).id];
-exp(ie).group     = 'GLBy0.08'; % << it is GLBy, not GLBv!
-exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
-exp(ie).timelimit = [ datenum(2020,2,19, 12, 0, 0), datenum(2024,9, 4, 23, 59, 59 ) ]; % it actually ends at 2024-09-05T09:00:00.000Z
-exp(ie).url_style = 0;
-
-% handcast (active) -------------------------------------------------------
-
-ie = ie + 1;
-exp(ie).id        = '03.1';
-exp(ie).name      = ['expt_' exp(ie).id];
-exp(ie).group     = 'ESPC-D-V02'; % << it is GLBy, not GLBv!
-exp(ie).url       = [ sourcebase, '/', exp(ie).group ];
-exp(ie).timelimit = [ datenum(2024, 9, 5, 0, 0, 0), now ];
-exp(ie).url_style = 1;
-
+% % % % % 
+% % % % % sourcebase = 'http://tds.hycom.org/thredds/dodsC' ;
+% % % % % 
+% % % % % 
+% % % % % % Please note that the timelimit in this section is extracted from 
+% % % % % %  "https://www7320.nrlssc.navy.mil/GLBhycomcice1-12/"
+% % % % % % Data may be still available out of the timelimit below on hycom.org 
+% % % % % 
+% % % % % ie = 0;
+% % % % % 
+% % % % % % Reanalysis --------------------------------------------------------------
+% % % % % 
+% % % % % for year_now = 1994:2015
+% % % % % 
+% % % % %     ie = ie + 1;
+% % % % %     exp(ie).id        = '53.X';
+% % % % %     exp(ie).name      = ['expt_' exp(ie).id];
+% % % % %     exp(ie).group     = 'GLBv0.08';
+% % % % %     exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name, '/data/', num2str(year_now) ];
+% % % % %     exp(ie).url_style = 0;
+% % % % % 
+% % % % %     if year_now == 2015 
+% % % % %         exp(ie).timelimit = [ datenum( year_now, 1, 1, 12, 0, 0 ), datenum(year_now, 12, 31, 9, 0, 0)];
+% % % % %     elseif year_now == 1994
+% % % % %         exp(ie).timelimit = [ datenum( year_now, 1, 1, 12, 0, 0 ), datenum(year_now, 12, 31, 21, 0, 0)];
+% % % % %     else
+% % % % %         exp(ie).timelimit = [ datenum( year_now, 1, 1,  0, 0, 0 ), datenum(year_now, 12, 31, 21, 0, 0)];
+% % % % % 
+% % % % %     end
+% % % % % 
+% % % % % end
+% % % % % 
+% % % % % % handcast archived -------------------------------------------------------
+% % % % % ie = ie + 1;
+% % % % % exp(ie).id        = '56.3';
+% % % % % exp(ie).name      = ['expt_' exp(ie).id];
+% % % % % exp(ie).group     = 'GLBv0.08';
+% % % % % exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
+% % % % % %exp(ie).timelimit = [ datenum(2014, 7, 1, 12, 0, 0), datenum(2016, 5, 1, 9, 0, 0)];
+% % % % % exp(ie).timelimit = [ datenum(2015, 12, 31, 12, 0, 0), datenum(2016, 5, 1, 9, 0, 0)]; % It is shorten to follow expt 53.X
+% % % % % exp(ie).url_style = 0;
+% % % % % 
+% % % % % ie = ie + 1;
+% % % % % exp(ie).id        = '57.2';
+% % % % % exp(ie).name      = ['expt_' exp(ie).id];
+% % % % % exp(ie).group     = 'GLBv0.08';
+% % % % % exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
+% % % % % exp(ie).timelimit = [ datenum(2016, 5, 1, 12, 0, 0), datenum(2017, 2, 1, 9, 0, 0)];
+% % % % % exp(ie).url_style = 0;
+% % % % % 
+% % % % % ie = ie + 1;
+% % % % % exp(ie).id        = '92.8';
+% % % % % exp(ie).name      = ['expt_' exp(ie).id];
+% % % % % exp(ie).group     = 'GLBv0.08';
+% % % % % exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
+% % % % % exp(ie).timelimit = [ datenum(2017, 2, 1, 12, 0, 0), datenum(2017, 6, 1, 9, 0, 0)];
+% % % % % exp(ie).url_style = 0;
+% % % % % 
+% % % % % ie = ie + 1;
+% % % % % exp(ie).id        = '57.7';
+% % % % % exp(ie).name      = ['expt_' exp(ie).id];
+% % % % % exp(ie).group     = 'GLBv0.08';
+% % % % % exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
+% % % % % exp(ie).timelimit = [ datenum(2017, 6, 1, 12, 0, 0), datenum(2017, 10, 1, 9, 0, 0)];
+% % % % % exp(ie).url_style = 0;
+% % % % % 
+% % % % % ie = ie + 1;
+% % % % % exp(ie).id        = '92.9';
+% % % % % exp(ie).name      = ['expt_' exp(ie).id];
+% % % % % exp(ie).group     = 'GLBv0.08';
+% % % % % exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
+% % % % % exp(ie).timelimit = [ datenum(2017, 10, 1, 12, 0, 0), datenum(2018, 1, 1, 9, 0, 0)];
+% % % % % exp(ie).url_style = 0;
+% % % % % 
+% % % % % ie = ie + 1;
+% % % % % exp(ie).id        = '93.0';
+% % % % % exp(ie).name      = ['expt_' exp(ie).id];
+% % % % % exp(ie).group     = 'GLBv0.08';
+% % % % % exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
+% % % % % exp(ie).timelimit = [ datenum(2018, 1, 1, 12, 0, 0), datenum(2020,2,19, 9, 0, 0)];
+% % % % % exp(ie).url_style = 0;
+% % % % % 
+% % % % % ie = ie + 1;
+% % % % % exp(ie).id        = '93.0';
+% % % % % exp(ie).name      = ['expt_' exp(ie).id];
+% % % % % exp(ie).group     = 'GLBy0.08'; % << it is GLBy, not GLBv!
+% % % % % exp(ie).url       = [ sourcebase, '/', exp(ie).group, '/', exp(ie).name ];
+% % % % % exp(ie).timelimit = [ datenum(2020,2,19, 12, 0, 0), datenum(2024,9, 4, 23, 59, 59 ) ]; % it actually ends at 2024-09-05T09:00:00.000Z
+% % % % % exp(ie).url_style = 0;
+% % % % % 
+% % % % % % handcast (active) -------------------------------------------------------
+% % % % % for year_now = 2024:2026
+% % % % % 
+% % % % %     ie = ie + 1;
+% % % % %     exp(ie).id        = '03.1';
+% % % % %     exp(ie).name      = ['expt_' exp(ie).id];
+% % % % %     exp(ie).group     = 'ESPC-D-V02'; % << it is GLBy, not GLBv!
+% % % % %     exp(ie).url       = [ sourcebase, '/', exp(ie).group ];
+% % % % %     exp(ie).url_style = 1;
+% % % % %     exp(ie).url_suffix = num2str(year_now);
+% % % % % 
+% % % % %     if year_now == 2024 
+% % % % %         exp(ie).timelimit = [ datenum( 2024, 9, 5, 0, 0, 0 ), datenum(2025, 1, 1, 9, 0, 0)];
+% % % % %     else
+% % % % %         exp(ie).timelimit = [ datenum( year_now, 1, 1, 12, 0, 0 ), datenum(year_now+1, 1, 1, 9, 0, 0)];
+% % % % %     end
+% % % % % 
+% % % % % 
+% % % % % end
 
 
 %%
@@ -211,6 +233,11 @@ for ie = 1:length( exp )
         else
             error
         end
+
+        if ~isempty( exp_now.url_suffix )
+            filename0 = [filename0, '/', exp_now.url_suffix];
+        end
+
         
         % get time from the remote netcdf file ------------
         count_err = 0;
@@ -272,13 +299,13 @@ for ie = 1:length( exp )
         var_download = { var_now.name, 'lon','lat', 'time','depth'} ;
         var_divided  =  var_now.name;
         divided_dim_str = ['time'];
-        Max_Count_per_group = 48;
+        % Max_Count_per_group = 48;
         
         fprintf('-------------------------------------------------------------------\n')
         fprintf('[%s] Downloading variable: %s (Period: %s)\n', datestr(now,0), var_now.name, FUN_str_timelimit_from_time(timelimit_now,'yyyymmdd HH:MM', ' - ') );
         fprintf('[%s] Downloading from %s \n',  datestr(now,0), filename0 );
         fprintf('[%s]             to   %s \n',  datestr(now,0), filename1 );
-        FUN_nc_OpenDAP_with_limit( filename0, filename1, dim_limit_var, dim_limit_val, var_download, var_divided, divided_dim_str, Max_Count_per_group  );
+        FUN_nc_OpenDAP_with_limit( filename0, filename1, dim_limit_var, dim_limit_val, var_download, var_divided, divided_dim_str, Max_Count_per_group, 'is_resumable', is_resumable  );
         fprintf('[%s] Done \n',  datestr(now,0) )
         fprintf('-------------------------------------------------------------------\n')
     end
